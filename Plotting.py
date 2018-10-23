@@ -15,8 +15,8 @@ map.drawstates()
 map.drawcountries()
 #map.drawlsmask(land_color='Linen', ocean_color='#CCFFFF') # can use HTML names or codes for colors
 #map.drawcounties()
-parallels = np.arange(20,50,5.) # make latitude lines ever 5 degrees from 30N-50N
-meridians = np.arange(-130,-60,5.) # make longitude lines every 5 degrees from 95W to 70W
+parallels = np.arange(20,60,15.) # make latitude lines ever 5 degrees from 30N-50N
+meridians = np.arange(-130,-60,15.) # make longitude lines every 5 degrees from 95W to 70W
 map.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 map.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 
