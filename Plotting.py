@@ -3,32 +3,41 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.basemap import Basemap, cm
 import matplotlib.colors as mcolors
-#nc = NetCDFFile('/home/z5194283/Mygit/Data/MRMS/NCs/MRMSGC6H2018091400.nc', 'r')
-nc = NetCDFFile('/home/z5194283/Mygit/Data/IMERG/IMERG-Early/140000.nc', 'r')
-lat = nc.variables['lat'][:]
-lon = nc.variables['lon'][:]
-#u = nc.variables['GaugeCorrQPE06H_0mabovemeansealevel'][:]
-u = nc.variables['precipitationCal'][:]
-u=np.transpose(u)
+nc = NetCDFFile('/home/z5194283/Mygit/Data/MRMS/NCs/MRMSGC6H2018091400.nc', 'r')
+#nc = NetCDFFile('/home/z5194283/Mygit/Data/IMERG/IMERG-Early/140000.nc', 'r')
+#lat = nc.variables['lat'][:]
+#lon = nc.variables['lon'][:]
+lat = nc.variables['latitude'][:]
+lon = nc.variables['longitude'][:]
+
+minlat=np.min(lat)
+maxlat=np.max(lat)
+minlon=np.min(lon)
+maxlon=np.max(lon)
+
+
+u = nc.variables['GaugeCorrQPE06H_0mabovemeansealevel'][:]
+#u = nc.variables['precipitationCal'][:]
+#u=np.transpose(u)
 #u=np.transpose(u) # 10m u-component of winds
-map = Basemap(projection='merc',llcrnrlon=-110.,llcrnrlat=20.,urcrnrlon=-60.,urcrnrlat=55.,resolution='i') # projection, lat/lon extents and resolution of polygons to draw
+map = Basemap(projection='merc',llcrnrlon=minlon,llcrnrlat=minlat,urcrnrlon=maxlon,urcrnrlat=maxlat,resolution='i') # projection, lat/lon extents and resolution of polygons to draw
 # resolutions: c - crude, l - low, i - intermediate, h - high, f - full
 map.drawcoastlines()
 map.drawstates()
 map.drawcountries()
 #map.drawlsmask(land_color='Linen', ocean_color='#CCFFFF') # can use HTML names or codes for colors
 #map.drawcounties()
-parallels = np.arange(20,60,15.) # make latitude lines ever 5 degrees from 30N-50N
-meridians = np.arange(-130,-60,15.) # make longitude lines every 5 degrees from 95W to 70W
+parallels = np.arange(minlat,maxlat,15.) # make latitude lines ever 5 degrees from 30N-50N
+meridians = np.arange(minlon,maxlon,15.) # make longitude lines every 5 degrees from 95W to 70W
 map.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 map.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 
 
 
-lons,lats= np.meshgrid(lon,lat) # for this dataset, longitude is 0 through 360, so you need to subtract 180 to properly display on map
-x,y = map(lons,lats)
-#a=np.max(u[0,:,:])
-a=np.max(u)
+#lons,lats= np.meshgrid(lon,lat) # for this dataset, longitude is 0 through 360, so you need to subtract 180 to properly display on map
+#x,y = map(lons,lats)
+a=np.max(u[0,:,:])
+#a=np.max(u)
 clevs = np.arange(0,a,(a-0)/20)
 cmap_data = [(1.0, 1.0, 1.0),
              (0.3137255012989044, 0.8156862854957581, 0.8156862854957581),
@@ -53,13 +62,13 @@ cmap_data = [(1.0, 1.0, 1.0),
              (0.4000000059604645, 0.20000000298023224, 0.0)]
 cmap = mcolors.ListedColormap(cmap_data, 'precipitation')
 #cs = map.contourf(x,y,u[0,:,:],clevs,cmap=cm.s3pcpn)#colors='blue')#,linewidths=1.)
-#cs = map.imshow(u[0,:,:],cmap=cmap)# cmap=cm.s3pcpn)#, alpha = 0.5)
-cs = map.imshow(u,cmap=cmap)# cmap=cm.s3pcpn)#, alpha = 0.5)
+cs = map.imshow(u[0,:,:],cmap=cmap)# cmap=cm.s3pcpn)#, alpha = 0.5)
+#cs = map.imshow(u,cmap=cmap)# cmap=cm.s3pcpn)#, alpha = 0.5)
 #plt.clabel(cs, fontsize=9, inline=1) # contour labels
 
 cbar = map.colorbar(cs,location='right',pad="5%")
 cbar.set_label('mm')
 
 plt.title('MRMS - Precipitation')
-plt.savefig('testIMERGmap.png',dpi=200)
+#plt.savefig('testIMERGmap.png',dpi=200)
 #cs = map.imshow(u,x,y)     #contour(x,y,mslp[0,:,:]/100.,clevs,colors='blue',linewidths=1.)
